@@ -59,6 +59,9 @@ endif()
 # Main executable
 add_executable(navier_solver navier_solver.cpp)
 
+# Mesh parser test executable
+add_executable(test_mesh_parser test_mesh_parser.cpp)
+
 # Link libraries
 if(MPI_FOUND)
   target_link_libraries(navier_solver
@@ -67,8 +70,19 @@ if(MPI_FOUND)
       MPI::MPI_CXX
       m  # math library
   )
+  target_link_libraries(test_mesh_parser
+    PRIVATE
+      mfem
+      MPI::MPI_CXX
+      m  # math library
+  )
 else()
   target_link_libraries(navier_solver
+    PRIVATE
+      mfem
+      m  # math library
+  )
+  target_link_libraries(test_mesh_parser
     PRIVATE
       mfem
       m  # math library

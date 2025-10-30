@@ -92,6 +92,7 @@ with open("cylinder.mesh", "w") as f:
     # Vertices
     f.write("vertices\n")
     f.write("{}\n".format(len(vertices)))
+    f.write("2\n")  # Space dimension (2D)
     for v in vertices:
         f.write("{} {}\n".format(v[0], v[1]))
 

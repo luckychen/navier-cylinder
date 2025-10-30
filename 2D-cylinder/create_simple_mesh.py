@@ -4,7 +4,7 @@
 import math
 
 # Create a simple rectangular mesh using triangles (easier for MFEM to handle)
-nx, ny = 100, 100
+nx, ny = 1, 1
 Lx, Ly = 10.0, 5.0
 
 vertices = []
@@ -92,6 +92,7 @@ with open("cylinder.mesh", "w") as f:
     # Vertices
     f.write("vertices\n")
     f.write("{}\n".format(len(vertices)))
+    f.write("2\n")  # Space dimension (2D)
     for v in vertices:
         f.write("{} {}\n".format(v[0], v[1]))
 
