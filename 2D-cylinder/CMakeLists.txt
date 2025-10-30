@@ -11,11 +11,11 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Find MPI
-find_package(MPI REQUIRED)
+# Find MPI (optional - MFEM can work without it)
+find_package(MPI QUIET)
 
 # MFEM configuration
-set(MFEM_DIR "../mfem-src" CACHE PATH "Path to MFEM source directory")
+set(MFEM_DIR "/fs1/home/ceoas/chenchon/mfem/mfem-src" CACHE PATH "Path to MFEM source directory")
 
 # Check if MFEM exists and is built
 if(NOT EXISTS "${MFEM_DIR}")
@@ -46,6 +46,7 @@ endif()
 # MFEM include directory
 include_directories("${MFEM_SOURCE_DIR}")
 include_directories("${MFEM_BUILD_DIR}")
+include_directories("${MFEM_BUILD_DIR}/config")
 
 # Link MFEM library
 link_directories("${MFEM_BUILD_DIR}")
@@ -59,12 +60,20 @@ endif()
 add_executable(navier_solver navier_solver.cpp)
 
 # Link libraries
-target_link_libraries(navier_solver
-  PRIVATE
-    mfem
-    MPI::MPI_CXX
-    m  # math library
-)
+if(MPI_FOUND)
+  target_link_libraries(navier_solver
+    PRIVATE
+      mfem
+      MPI::MPI_CXX
+      m  # math library
+  )
+else()
+  target_link_libraries(navier_solver
+    PRIVATE
+      mfem
+      m  # math library
+  )
+endif()
 
 # Include directories for target
 target_include_directories(navier_solver

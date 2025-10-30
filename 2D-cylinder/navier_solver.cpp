@@ -195,7 +195,9 @@ public:
           momentum_solver(nullptr), pressure_solver(nullptr),
           A_prec(nullptr), P_prec(nullptr),
           Re(1000.0), kinvis(1.0/1000.0), dt(0.001), vel_order(2), pres_order(1),
-          final_time(100.0), num_steps(100000) {}
+          final_time(100.0), num_steps(100000) {
+        // u_save, p_save, and time_stamps are automatically initialized as empty vectors
+    }
 
     ~NavierStokesSolver() {
         delete fespace_vel;

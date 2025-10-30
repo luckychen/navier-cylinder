@@ -1,0 +1,1 @@
+/bin/c++  -Wall -O3 -march=native -O3 -DNDEBUG CMakeFiles/navier_solver.dir/navier_solver.cpp.o -o navier_solver   -L/fs1/home/ceoas/chenchon/mfem/mfem-src/build  -Wl,-rpath,/fs1/home/ceoas/chenchon/mfem/mfem-src/build: -lmfem -lm 
