@@ -99,7 +99,7 @@ public:
     }
 
     void SetupMesh() {
-        // Read mesh
+        // Read mesh (generate_edges=1, refine_boundary=1)
         mesh = new Mesh("cylinder.mesh", 1, 1);
 
         // Refine mesh if needed

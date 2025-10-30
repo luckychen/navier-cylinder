@@ -299,3 +299,83 @@ events:
         
       exitCode: 2
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1322 (_MPI_try_staged_settings)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1645 (_MPI_check_lang_works)"
+      - "CMakeLists.txt:15 (find_package)"
+    description: "The MPI test test_mpi for CXX in mode normal"
+    directories:
+      source: "/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN"
+      binary: "/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /bin/gmake -f Makefile cmTC_27463/fast && gmake: Warning: File 'Makefile' has modification time 0.088 s in the future
+        /bin/gmake  -f CMakeFiles/cmTC_27463.dir/build.make CMakeFiles/cmTC_27463.dir/build
+        gmake[1]: Entering directory '/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN'
+        gmake[1]: Warning: File 'CMakeFiles/cmTC_27463.dir/flags.make' has modification time 0.063 s in the future
+        Building CXX object CMakeFiles/cmTC_27463.dir/test_mpi.cpp.o
+        /bin/c++   -std=gnu++11 -o CMakeFiles/cmTC_27463.dir/test_mpi.cpp.o -c /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN/test_mpi.cpp
+        /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN/test_mpi.cpp:1:10: fatal error: mpi.h: No such file or directory
+            1 | #include <mpi.h>
+              |          ^~~~~~~
+        compilation terminated.
+        gmake[1]: *** [CMakeFiles/cmTC_27463.dir/build.make:78: CMakeFiles/cmTC_27463.dir/test_mpi.cpp.o] Error 1
+        gmake[1]: Leaving directory '/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-8LA5XN'
+        gmake: *** [Makefile:127: cmTC_27463/fast] Error 2
+        
+      exitCode: 2
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1278 (try_compile)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1322 (_MPI_try_staged_settings)"
+      - "/usr/share/cmake/Modules/FindMPI.cmake:1645 (_MPI_check_lang_works)"
+      - "CMakeLists.txt:15 (find_package)"
+    description: "The MPI test test_mpi for CXX in mode normal"
+    directories:
+      source: "/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX"
+      binary: "/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "MPI_RESULT_CXX_test_mpi_normal"
+      cached: true
+      stdout: |
+        Change Dir: /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX
+        
+        Run Build Command(s):/usr/bin/cmake -E env VERBOSE=1 /bin/gmake -f Makefile cmTC_996b5/fast && gmake: Warning: File 'Makefile' has modification time 0.12 s in the future
+        /bin/gmake  -f CMakeFiles/cmTC_996b5.dir/build.make CMakeFiles/cmTC_996b5.dir/build
+        gmake[1]: Entering directory '/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX'
+        gmake[1]: Warning: File 'CMakeFiles/cmTC_996b5.dir/flags.make' has modification time 0.11 s in the future
+        Building CXX object CMakeFiles/cmTC_996b5.dir/test_mpi.cpp.o
+        /bin/c++   -std=gnu++11 -o CMakeFiles/cmTC_996b5.dir/test_mpi.cpp.o -c /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX/test_mpi.cpp
+        /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX/test_mpi.cpp:1:10: fatal error: mpi.h: No such file or directory
+            1 | #include <mpi.h>
+              |          ^~~~~~~
+        compilation terminated.
+        gmake[1]: *** [CMakeFiles/cmTC_996b5.dir/build.make:78: CMakeFiles/cmTC_996b5.dir/test_mpi.cpp.o] Error 1
+        gmake[1]: Leaving directory '/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/CMakeScratch/TryCompile-K1CLOX'
+        gmake: *** [Makefile:127: cmTC_996b5/fast] Error 2
+        
+      exitCode: 2
+...
