@@ -81,14 +81,12 @@ public:
         if (mesh) delete mesh;
     }
 
-    void Init(int argc, char *argv[]) {
-        // Parse command line arguments
-        if (argc > 1) {
-            Re = atof(argv[1]);
-            kinvis = 1.0 / Re;
-        }
-        if (argc > 2) dt = atof(argv[2]);
-        if (argc > 3) final_time = atof(argv[3]);
+    void Init(double reynolds, double time_step, double final_t) {
+        // Set parameters from main
+        Re = reynolds;
+        kinvis = 1.0 / Re;
+        dt = time_step;
+        final_time = final_t;
 
         num_steps = (int)(final_time / dt);
 
@@ -262,7 +260,7 @@ int main(int argc, char *argv[]) {
 
     // Create and run solver
     NavierStokesSolver solver;
-    solver.Init(argc, argv);
+    solver.Init(Re, dt, t_final);
     solver.SetupOutput();
 
     try {
