@@ -169,7 +169,7 @@ sol_p_simple_*.gf       ← Pressure field snapshots
 
 ### Current Status
 ```
-Local:  /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+Local:  <your-cloned-directory>/navier-cylinder
 Remote: https://github.com/luckychen/navier-cylinder
 Branch: main
 Status: ✅ All synced

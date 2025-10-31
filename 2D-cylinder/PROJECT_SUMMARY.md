@@ -26,7 +26,7 @@ This project implements a **high-performance 2D incompressible Navier-Stokes sol
 ## 📁 Project Structure
 
 ```
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/
+navier-cylinder/  (wherever you cloned it)
 ├── README.md                   ← START HERE (5 min read)
 ├── README_SETUP.md             ← Full documentation (10 min read)
 ├── WORKFLOW.md                 ← Development guide
@@ -50,7 +50,7 @@ This project implements a **high-performance 2D incompressible Navier-Stokes sol
 
 ### One-Command Setup
 ```bash
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+cd navier-cylinder  # your cloned directory
 bash setup_environment.sh
 ```
 
@@ -214,7 +214,7 @@ See `WORKFLOW.md` for detailed instructions.
 
 ### Current Setup
 ```
-Local:  /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+Local:  <your-cloned-directory>/navier-cylinder
 Remote: git@github.com:luckychen/navier-cylinder.git
 Branch: main
 Status: Synced (up to date with remote)
@@ -428,7 +428,7 @@ For issues or questions:
 Everything is set up and ready to use:
 
 ```bash
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+cd navier-cylinder  # your cloned directory
 source activate.sh
 bash quick_test.sh
 ```

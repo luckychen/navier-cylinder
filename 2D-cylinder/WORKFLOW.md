@@ -4,8 +4,8 @@ This document describes how to work with the navier-cylinder project and push ch
 
 ## Git Repository Setup
 
-✅ **Already configured:**
-- **Local:** `/fs1/home/ceoas/chenchon/mfem/2D-cylinder`
+✅ **Already configured when you clone:**
+- **Local:** `<your-cloned-directory>/navier-cylinder`
 - **Remote:** `https://github.com/luckychen/navier-cylinder`
 - **Branch:** `main`
 
@@ -16,7 +16,7 @@ This document describes how to work with the navier-cylinder project and push ch
 ### 1. Make Changes
 
 ```bash
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+cd navier-cylinder  # your cloned directory
 
 # Edit files, add features, fix bugs
 vim navier_simple.cpp
@@ -88,7 +88,7 @@ This uploads your commits to GitHub.
 
 ```bash
 # Navigate to project
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+cd navier-cylinder  # your cloned directory
 
 # Check what changed
 git status
@@ -197,7 +197,7 @@ These are created during runs but won't be tracked in git.
 ## File Organization
 
 ```
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/
+navier-cylinder/  (your cloned directory)
 ├── navier_simple.cpp           ← Main solver (edit this for physics)
 ├── CMakeLists.txt              ← Build config (edit if adding files)
 ├── generate_cylinder_mesh.py   ← Mesh generation (edit for mesh changes)
