@@ -162,17 +162,21 @@ if [ $MFEM_FOUND -eq 0 ]; then
     print_success "MFEM cloned to: $MFEM_DIR"
 fi
 
-# Check if MFEM build directory exists and has libmfem.a
+# Note: MFEM uses CMake build, library goes in: mfem-src/build/libmfem.a
+# NOT in mfem-src/ root directory
 MFEM_BUILD_DIR="$MFEM_DIR/build"
 MFEM_LIB="$MFEM_BUILD_DIR/libmfem.a"
 
 if [ -f "$MFEM_LIB" ]; then
-    print_success "MFEM library found: $MFEM_LIB ($(du -h $MFEM_LIB | cut -f1))"
+    print_success "MFEM library found at: $MFEM_LIB ($(du -h $MFEM_LIB | cut -f1))"
+    print_success "  → Location: $MFEM_DIR/build/"
     MFEM_FOUND=1
 else
     print_warning "MFEM library not compiled. Building MFEM..."
+    print_warning "  → Will create: $MFEM_DIR/build/"
+    print_warning "  → Output file: libmfem.a"
 
-    # Create build directory
+    # Create build directory (IMPORTANT: CMake builds go in subdirectory, not root)
     mkdir -p "$MFEM_BUILD_DIR"
     cd "$MFEM_BUILD_DIR"
 
@@ -396,8 +400,10 @@ echo "╚═══════════════════════�
 echo ""
 echo "Environment Setup:"
 echo "  • Conda Environment:  $ENV_NAME"
+echo "  • MFEM Source:        $MFEM_DIR"
+echo "  • MFEM Build Output:  $MFEM_DIR/build/"
 echo "  • MFEM Library:       $MFEM_LIB"
-echo "  • Build Directory:    $BUILD_DIR"
+echo "  • Navier-Stokes Build: $BUILD_DIR"
 echo "  • Executable:         $BUILD_DIR/navier_simple"
 echo ""
 echo "Next Steps:"
