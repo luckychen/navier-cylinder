@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     s_form.Finalize();
 
     ParMixedBilinearForm d_form(&fespace_vel, &fespace_pres);
-    d_form.AddDomainIntegrator(new VectorDivIntegrator());
+    d_form.AddDomainIntegrator(new VectorDivergenceIntegrator());
     d_form.Assemble();
     d_form.Finalize();
 
@@ -139,12 +139,9 @@ int main(int argc, char *argv[])
     HypreParMatrix *S = s_form.ParallelAssemble();
     HypreParMatrix *D = d_form.ParallelAssemble();
 
-    // Compute H = M/dt + nu*K
-    HypreParMatrix *H = new HypreParMatrix(*M);
-    H->Scale(1.0 / dt);
-    HypreParMatrix *nuK = new HypreParMatrix(*K);
-    nuK->Scale(nu);
-    *H += *nuK;
+    // Compute H = M/dt + nu*K using MFEM Add() function
+    // H = (1/dt)*M + nu*K
+    HypreParMatrix *H = Add(1.0/dt, *M, nu, *K);
 
     // Build solvers
     CGSolver vel_solver(MPI_COMM_WORLD);
@@ -176,46 +173,56 @@ int main(int argc, char *argv[])
 
         // Step 1: Momentum predictor - solve (H) u* = (M/dt) u_old - f_conv
         {
-            ParLinearForm rhs_form(&fespace_vel);
-            rhs_form.AddDomainIntegrator(new VectorMassIntegrator());
-            rhs_form.Assemble();
+            // Create HypreParVectors from grid functions
+            HypreParVector *U_old = u_old.ParallelProject();
+            HypreParVector *U_star = u_star.ParallelProject();
+            HypreParVector RHS(fespace_vel.GetComm(), fespace_vel.GlobalTrueVSize(),
+                               fespace_vel.GetTrueDofOffsets());
 
-            Vector rhs_vec;
-            Vector u_old_vec(u_old.GetData(), vel_size);
-            M->Mult(u_old_vec, rhs_vec);
-            rhs_vec *= (1.0 / dt);
+            // Compute RHS = (M/dt) * u_old
+            M->Mult(*U_old, RHS);
+            RHS *= (1.0 / dt);
 
             // Apply Dirichlet BCs
             HypreParMatrix H_copy(*H);
-            Vector u_star_vec(u_star.GetData(), vel_size);
-            H_copy.EliminateRowsCols(ess_dofs_vel, Operator::DiagonalPolicy::DIAG_ONE, u_star_vec,
-                                     rhs_vec);
+            H_copy.EliminateRowsCols(ess_dofs_vel, *U_star, RHS);
 
             // Solve
             vel_solver.SetOperator(H_copy);
-            vel_solver.Mult(rhs_vec, u_star_vec);
+            vel_solver.Mult(RHS, *U_star);
 
-            u_star = u_star_vec;
+            // Update grid function
+            u_star.Distribute(U_star);
+
+            delete U_old;
+            delete U_star;
         }
 
         // Step 2: Pressure Poisson - solve S p = (1/dt) D·u*
         {
-            Vector u_star_vec(u_star.GetData(), vel_size);
-            Vector Du_star(pres_size);
-            D->Mult(u_star_vec, Du_star);
-            Du_star *= (1.0 / dt);
+            // Create HypreParVectors
+            HypreParVector *U_star = u_star.ParallelProject();
+            HypreParVector *P_new = p_new.ParallelProject();
+            HypreParVector RHS_p(fespace_pres.GetComm(), fespace_pres.GlobalTrueVSize(),
+                                 fespace_pres.GetTrueDofOffsets());
+
+            // Compute RHS = (1/dt) * D * u_star
+            D->Mult(*U_star, RHS_p);
+            RHS_p *= (1.0 / dt);
 
             // Apply Dirichlet BC for pressure
             HypreParMatrix S_copy(*S);
-            Vector p_new_vec(p_new.GetData(), pres_size);
-            S_copy.EliminateRowsCols(ess_dofs_pres, Operator::DiagonalPolicy::DIAG_ONE, p_new_vec,
-                                     Du_star);
+            S_copy.EliminateRowsCols(ess_dofs_pres, *P_new, RHS_p);
 
             // Solve
             pres_solver.SetOperator(S_copy);
-            pres_solver.Mult(Du_star, p_new_vec);
+            pres_solver.Mult(RHS_p, *P_new);
 
-            p_new = p_new_vec;
+            // Update grid function
+            p_new.Distribute(P_new);
+
+            delete U_star;
+            delete P_new;
         }
 
         // Step 3: Velocity correction - u = u* - dt * G * p
@@ -281,7 +288,6 @@ int main(int argc, char *argv[])
     delete S;
     delete D;
     delete H;
-    delete nuK;
     delete pmesh;
 
     return 0;
