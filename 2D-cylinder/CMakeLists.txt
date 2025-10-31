@@ -15,11 +15,29 @@ endif()
 find_package(MPI QUIET)
 
 # MFEM configuration
-set(MFEM_DIR "/fs1/home/ceoas/chenchon/mfem/mfem-src" CACHE PATH "Path to MFEM source directory")
+# User can specify MFEM_DIR via command line: cmake -DMFEM_DIR=/path/to/mfem ..
+# Or it will look for mfem-src in parent directories
+if(NOT MFEM_DIR)
+  # Try to find MFEM automatically
+  find_file(MFEM_CONFIG config.mk PATHS
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mfem-src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../mfem-src"
+    "$ENV{HOME}/mfem-src"
+    "$ENV{HOME}/mfem/mfem-src"
+    NO_DEFAULT_PATH
+  )
 
-# Check if MFEM exists and is built
-if(NOT EXISTS "${MFEM_DIR}")
-  message(FATAL_ERROR "MFEM directory not found: ${MFEM_DIR}")
+  if(MFEM_CONFIG)
+    get_filename_component(MFEM_DIR "${MFEM_CONFIG}" DIRECTORY)
+    message(STATUS "Found MFEM at: ${MFEM_DIR}")
+  else()
+    message(FATAL_ERROR "MFEM not found. Please specify -DMFEM_DIR=/path/to/mfem when running cmake")
+  endif()
+endif()
+
+# Check if MFEM exists
+if(NOT EXISTS "${MFEM_DIR}/config.mk")
+  message(FATAL_ERROR "MFEM directory invalid: ${MFEM_DIR}")
 endif()
 
 # Add MFEM library
@@ -52,7 +70,11 @@ include_directories("${MFEM_BUILD_DIR}/config")
 link_directories("${MFEM_BUILD_DIR}")
 
 # Add conda paths for HYPRE, METIS, and other libraries
-link_directories("/home/ceoas/chenchon/miniconda3_x86/envs/mfem/lib")
+# Look in the current conda environment first
+if(DEFINED ENV{CONDA_PREFIX})
+  link_directories("$ENV{CONDA_PREFIX}/lib")
+  include_directories("$ENV{CONDA_PREFIX}/include")
+endif()
 
 # Compiler flags
 if(UNIX AND NOT APPLE)
