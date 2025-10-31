@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.8)
 
 project(NavierStokesCylinderFlow CXX)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
+# Set C++ standard (MFEM requires at least C++14, best with C++17)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Default build type
@@ -51,75 +51,50 @@ include_directories("${MFEM_BUILD_DIR}/config")
 # Link MFEM library
 link_directories("${MFEM_BUILD_DIR}")
 
+# Add conda paths for HYPRE, METIS, and other libraries
+link_directories("/home/ceoas/chenchon/miniconda3_x86/envs/mfem/lib")
+
 # Compiler flags
 if(UNIX AND NOT APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native")
 endif()
 
-# Main executable
-add_executable(navier_solver navier_solver.cpp)
-
-# Mesh parser test executable
-add_executable(test_mesh_parser test_mesh_parser.cpp)
+# Main executable: Simplified Navier-Stokes solver
+add_executable(navier_simple navier_simple.cpp)
 
 # Link libraries
 if(MPI_FOUND)
-  target_link_libraries(navier_solver
+  target_link_libraries(navier_simple
     PRIVATE
       mfem
       MPI::MPI_CXX
-      m  # math library
-  )
-  target_link_libraries(test_mesh_parser
-    PRIVATE
-      mfem
-      MPI::MPI_CXX
+      HYPRE
+      metis
       m  # math library
   )
 else()
-  target_link_libraries(navier_solver
+  target_link_libraries(navier_simple
     PRIVATE
       mfem
-      m  # math library
-  )
-  target_link_libraries(test_mesh_parser
-    PRIVATE
-      mfem
+      HYPRE
+      metis
       m  # math library
   )
 endif()
 
 # Include directories for target
-target_include_directories(navier_solver
+target_include_directories(navier_simple
   PRIVATE
     "${MFEM_SOURCE_DIR}"
     "${MFEM_BUILD_DIR}"
     "${MPI_INCLUDE_PATH}"
 )
 
-# Optional: Preprocessing for mesh generation
-add_custom_target(generate_mesh
-  COMMAND python3 generate_mesh.py
-  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-  COMMENT "Generating cylinder mesh..."
-)
-
-# Make navier_solver depend on mesh generation
-add_dependencies(navier_solver generate_mesh)
-
 # Installation targets
-install(TARGETS navier_solver DESTINATION bin)
-install(FILES cylinder.mesh DESTINATION share)
-install(FILES generate_mesh.py DESTINATION share)
-
-# Custom target to run simulation
-add_custom_target(run_simulation
-  COMMAND mpirun -np 1 ./navier_solver -r 0 -Re 1000 -dt 0.001 -t 100
-  DEPENDS navier_solver
-  COMMENT "Running Navier-Stokes simulation..."
-)
+install(TARGETS navier_simple DESTINATION bin)
 
 # Verbose output
 message(STATUS "MFEM_DIR: ${MFEM_DIR}")
 message(STATUS "MPI_CXX_COMPILER: ${MPI_CXX_COMPILER}")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Target: navier_simple")

@@ -1,9 +1,0 @@
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/navier_solver.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/generate_mesh.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/run_simulation.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/edit_cache.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/rebuild_cache.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/list_install_components.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/install.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/install/local.dir
-/fs1/home/ceoas/chenchon/mfem/2D-cylinder/build/CMakeFiles/install/strip.dir

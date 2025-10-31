@@ -1,0 +1,42 @@
+# Build artifacts
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.o
+*.a
+*.so
+*.dylib
+
+# Generated files
+*.mesh
+*.dat
+*.gf
+*.png
+forces_simple.*
+sol_*.gf
+cylinder_*.mesh
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Conda environment
+.conda/
+
+# Temporary files
+*.tmp
+*.bak
