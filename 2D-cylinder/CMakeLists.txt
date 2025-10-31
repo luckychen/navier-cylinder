@@ -18,34 +18,51 @@ find_package(MPI QUIET)
 # User can specify MFEM_DIR via command line: cmake -DMFEM_DIR=/path/to/mfem ..
 # Or it will look for mfem-src in parent directories
 if(NOT MFEM_DIR)
-  # Try to find MFEM automatically
-  find_file(MFEM_CONFIG config.mk PATHS
+  # Try to find MFEM automatically - look for libmfem.a in build dir or root
+  find_file(MFEM_LIB_FILE libmfem.a PATHS
+    "${CMAKE_CURRENT_SOURCE_DIR}/../mfem-src/build"
     "${CMAKE_CURRENT_SOURCE_DIR}/../mfem-src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../mfem-src/build"
     "${CMAKE_CURRENT_SOURCE_DIR}/../../mfem-src"
+    "$ENV{HOME}/mfem-src/build"
     "$ENV{HOME}/mfem-src"
+    "$ENV{HOME}/mfem/mfem-src/build"
     "$ENV{HOME}/mfem/mfem-src"
     NO_DEFAULT_PATH
   )
 
-  if(MFEM_CONFIG)
-    get_filename_component(MFEM_DIR "${MFEM_CONFIG}" DIRECTORY)
+  if(MFEM_LIB_FILE)
+    get_filename_component(MFEM_BUILD_DIR_FOUND "${MFEM_LIB_FILE}" DIRECTORY)
+    # Get parent directory (source dir)
+    get_filename_component(MFEM_DIR "${MFEM_BUILD_DIR_FOUND}" DIRECTORY)
+    # If libmfem.a was in the source dir itself (not build/), use it as source dir
+    if(NOT EXISTS "${MFEM_DIR}/fem")
+      set(MFEM_DIR "${MFEM_BUILD_DIR_FOUND}")
+    endif()
     message(STATUS "Found MFEM at: ${MFEM_DIR}")
   else()
     message(FATAL_ERROR "MFEM not found. Please specify -DMFEM_DIR=/path/to/mfem when running cmake")
   endif()
 endif()
 
-# Check if MFEM exists
-if(NOT EXISTS "${MFEM_DIR}/config.mk")
-  message(FATAL_ERROR "MFEM directory invalid: ${MFEM_DIR}")
-endif()
-
-# Add MFEM library
+# Check if MFEM exists (CMake or Make build)
 set(MFEM_SOURCE_DIR "${MFEM_DIR}")
 set(MFEM_BUILD_DIR "${MFEM_DIR}/build")
 
+# Check for CMake-built MFEM first, then Make-built
+if(EXISTS "${MFEM_BUILD_DIR}/libmfem.a")
+  set(MFEM_LIB "${MFEM_BUILD_DIR}/libmfem.a")
+  message(STATUS "Found CMake-built MFEM at: ${MFEM_BUILD_DIR}")
+elseif(EXISTS "${MFEM_DIR}/libmfem.a")
+  set(MFEM_LIB "${MFEM_DIR}/libmfem.a")
+  set(MFEM_BUILD_DIR "${MFEM_DIR}")
+  message(STATUS "Found Make-built MFEM at: ${MFEM_DIR}")
+else()
+  message(FATAL_ERROR "MFEM library not found in ${MFEM_DIR}")
+endif()
+
 # If MFEM not built, we'll build it
-if(NOT EXISTS "${MFEM_BUILD_DIR}/libmfem.a")
+if(NOT EXISTS "${MFEM_LIB}")
   message(STATUS "Building MFEM library...")
   execute_process(
     COMMAND mkdir -p build
