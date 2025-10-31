@@ -67,8 +67,13 @@ If you don't have Conda installed:
 
 ```bash
 # Download Miniconda (lightweight, recommended)
+# For Linux:
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
+
+# For macOS:
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+bash Miniconda3-latest-MacOSX-x86_64.sh
 
 # Follow the installer prompts
 # Make sure to allow conda init
@@ -93,10 +98,16 @@ bash setup_environment.sh
 ```
 
 This script will:
-- Create a conda environment named `navier-cylinder`
-- Install all C++ build tools
-- Detect or help you install MFEM
-- Build the solver automatically
+- Create a conda environment with all dependencies
+- Automatically find or help you install MFEM
+- Compile the solver
+- Create activation scripts for easy future use
+
+**Note:** The setup works on any machine! It automatically:
+- Detects your conda environment
+- Searches for MFEM in standard locations
+- Uses portable CMake configuration
+- Works on Linux, macOS, and WSL2
 
 ### Step 4: Verify Installation
 
