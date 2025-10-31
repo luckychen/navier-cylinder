@@ -1,0 +1,33 @@
+# Build and dependency directories
+mfem-src/
+build/
+.build/
+
+# Generated files
+*.o
+*.a
+*.so
+*.dylib
+*.mesh
+*.dat
+*.gf
+*.png
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+
+# Temporary files
+*.tmp
+*.bak
