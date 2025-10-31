@@ -50,80 +50,133 @@ PARENT_DIR="$(dirname "$PROJECT_ROOT")"
 print_success "Project root: $PROJECT_ROOT"
 print_success "Parent directory: $PARENT_DIR"
 
-# Check if environment already exists
+# ============================================================================
+# Check for existing environment and packages
+# ============================================================================
 ENV_NAME="navier-cylinder"
+ENV_EXISTS=0
+PACKAGES_OK=0
+
+# List of required packages
+REQUIRED_CONDA_PACKAGES=(
+    "python=3.10"
+    "cmake"
+    "make"
+    "gxx_linux-64"
+    "gcc_linux-64"
+    "gfortran_linux-64"
+    "pkg-config"
+    "git"
+    "bzip2"
+    "zlib"
+    "hypre"
+    "metis"
+    "openmpi"
+    "lapack"
+    "blas"
+)
+
+REQUIRED_PIP_PACKAGES=(
+    "numpy"
+    "scipy"
+    "matplotlib"
+    "scikit-learn"
+)
+
+# Check if environment exists
 if conda env list | grep -q "^$ENV_NAME "; then
-    print_warning "Environment '$ENV_NAME' already exists. Removing it..."
-    conda remove -n $ENV_NAME -y --all 2>/dev/null || true
+    ENV_EXISTS=1
+    print_success "Environment '$ENV_NAME' already exists"
 fi
 
 # ============================================================================
-# STEP 1: Create Conda Environment with all build tools
+# STEP 1: Create or Reuse Conda Environment
 # ============================================================================
-print_header "Step 1: Creating Conda Environment"
-echo "Creating environment: $ENV_NAME with all required packages"
+if [ $ENV_EXISTS -eq 1 ]; then
+    print_header "Step 1: Checking Existing Conda Environment"
 
-# Get Python version (use 3.10 for better MFEM compatibility)
-PYTHON_VERSION="3.10"
+    # Activate the environment
+    eval "$(conda shell.bash hook)"
+    conda activate $ENV_NAME
+    print_success "Environment activated: $ENV_NAME"
 
-# Create conda environment with C/C++ compilers, build tools, and dependencies
-conda create -n $ENV_NAME -y \
-    python=$PYTHON_VERSION \
-    cmake \
-    make \
-    gxx_linux-64 \
-    gcc_linux-64 \
-    gfortran_linux-64 \
-    pkg-config \
-    git \
-    bzip2 \
-    zlib
+    # Check if all packages are installed
+    echo "Verifying installed packages..."
+    PACKAGES_OK=1
 
-print_success "Conda environment created: $ENV_NAME"
+    for pkg in "${REQUIRED_CONDA_PACKAGES[@]}"; do
+        # Extract package name (before = or @)
+        pkg_name=$(echo "$pkg" | sed 's/=.*//' | sed 's/@.*//')
+        if conda list -n $ENV_NAME | grep -q "^${pkg_name} "; then
+            print_success "  ✓ $pkg_name installed"
+        else
+            print_warning "  ✗ $pkg_name NOT installed"
+            PACKAGES_OK=0
+        fi
+    done
 
-# Activate the environment
-echo "Activating environment..."
-eval "$(conda shell.bash hook)"
-conda activate $ENV_NAME
+    if [ $PACKAGES_OK -eq 1 ]; then
+        print_success "All conda packages already installed!"
+    else
+        print_warning "Some packages missing. Installing..."
+        conda install -n $ENV_NAME -y "${REQUIRED_CONDA_PACKAGES[@]}"
+        print_success "Packages installed"
+    fi
+else
+    print_header "Step 1: Creating New Conda Environment"
 
-print_success "Environment activated"
+    # Create conda environment with all required packages
+    echo "Creating environment: $ENV_NAME with required packages"
+    conda create -n $ENV_NAME -y \
+        "${REQUIRED_CONDA_PACKAGES[@]}"
+
+    print_success "Conda environment created: $ENV_NAME"
+
+    # Activate the environment
+    echo "Activating environment..."
+    eval "$(conda shell.bash hook)"
+    conda activate $ENV_NAME
+
+    print_success "Environment activated"
+fi
 
 # Verify compilers are available
 print_success "Checking compilers..."
-which gcc && print_success "GCC available"
-which g++ && print_success "G++ available"
-which gfortran && print_success "Gfortran available"
-which cmake && print_success "CMake available"
+which gcc > /dev/null && print_success "  GCC available" || print_error "  GCC NOT available"
+which g++ > /dev/null && print_success "  G++ available" || print_error "  G++ NOT available"
+which gfortran > /dev/null && print_success "  Gfortran available" || print_error "  Gfortran NOT available"
+which cmake > /dev/null && print_success "  CMake available" || print_error "  CMake NOT available"
 
 # ============================================================================
-# STEP 2: Install MFEM Dependencies with Conda
+# STEP 2: Install/Verify Python Packages with pip
 # ============================================================================
-print_header "Step 2: Installing MFEM Dependencies (conda packages)"
+print_header "Step 2: Checking Python Packages"
 
-echo "Installing MFEM build dependencies..."
-conda install -n $ENV_NAME -y \
-    hypre \
-    metis \
-    openmpi \
-    lapack \
-    blas
+echo "Verifying Python packages..."
+PIP_PACKAGES_OK=1
 
-print_success "MFEM dependencies installed with conda"
+for pkg in "${REQUIRED_PIP_PACKAGES[@]}"; do
+    if pip show "$pkg" > /dev/null 2>&1; then
+        print_success "  ✓ $pkg installed"
+    else
+        print_warning "  ✗ $pkg NOT installed"
+        PIP_PACKAGES_OK=0
+    fi
+done
+
+if [ $PIP_PACKAGES_OK -eq 1 ]; then
+    print_success "All Python packages already installed!"
+else
+    print_warning "Some Python packages missing. Installing..."
+    pip install --upgrade pip setuptools wheel
+    pip install "${REQUIRED_PIP_PACKAGES[@]}"
+    print_success "Python packages installed"
+fi
 
 # ============================================================================
-# STEP 3: Install Python Packages with pip
+# STEP 3: Check for MFEM and Download if Needed
 # ============================================================================
-print_header "Step 3: Installing Python Packages"
-
-pip install --upgrade pip setuptools wheel
-pip install numpy scipy matplotlib scikit-learn
-
-print_success "Python packages installed"
-
-# ============================================================================
-# STEP 4: Check for MFEM and Download if Needed
-# ============================================================================
-print_header "Step 4: Checking/Installing MFEM"
+print_header "Step 3: Checking/Installing MFEM"
 
 MFEM_FOUND=0
 MFEM_DIR=""
@@ -209,9 +262,9 @@ else
 fi
 
 # ============================================================================
-# STEP 5: Build the Navier-Stokes Project
+# STEP 4: Build the Navier-Stokes Project
 # ============================================================================
-print_header "Step 5: Building Navier-Stokes Project"
+print_header "Step 4: Building Navier-Stokes Project"
 
 # Create build directory
 BUILD_DIR="$PROJECT_ROOT/build"
@@ -315,9 +368,9 @@ chmod +x "$QUICKSTART_SCRIPT"
 print_success "Quick start script created: $QUICKSTART_SCRIPT"
 
 # ============================================================================
-# STEP 6: Create Activation and Quick-Start Scripts
+# STEP 5: Create Activation and Quick-Start Scripts
 # ============================================================================
-print_header "Step 6: Creating Helper Scripts"
+print_header "Step 5: Creating Helper Scripts"
 
 # Create activation script
 ACTIVATE_SCRIPT="$PROJECT_ROOT/activate.sh"
