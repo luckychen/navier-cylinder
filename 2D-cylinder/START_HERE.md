@@ -4,13 +4,19 @@
 
 ---
 
-## ⚡ 60-Second Quick Start
+## ⚡ Quick Start - Fully Automated Setup
 
 ```bash
-# Setup everything (5 minutes, one time only)
+# Setup everything (8-15 minutes first time, one time only)
+# This automatically:
+#   - Creates conda environment with all build tools
+#   - Installs MFEM dependencies (HYPRE, METIS, OpenMPI)
+#   - Downloads MFEM from GitHub if needed
+#   - Compiles MFEM library
+#   - Compiles the Navier-Stokes solver
 bash setup_environment.sh
 
-# Activate environment
+# Activate environment (or use: conda activate navier-cylinder)
 source activate.sh
 
 # Run a test simulation (1 minute)
@@ -20,6 +26,9 @@ bash quick_test.sh
 # - forces_simple.png (plots)
 # - forces_simple.dat (data)
 ```
+
+**First run:** 8-15 minutes (includes MFEM download & compilation)
+**Subsequent runs:** < 1 second (MFEM already built)
 
 ---
 

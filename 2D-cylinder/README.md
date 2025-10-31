@@ -12,17 +12,26 @@ High-performance solver for unsteady cylinder wake flows at Reynolds numbers up 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Setup (5 minutes)
+# 1. Fully Automated Setup (8-15 minutes, one time only)
+# This automatically handles:
+#   ✓ Creates conda environment with all compilers & tools
+#   ✓ Installs MFEM dependencies (HYPRE, METIS, OpenMPI)
+#   ✓ Downloads & compiles MFEM from source (5-10 min)
+#   ✓ Builds the Navier-Stokes solver
 bash setup_environment.sh
 
-# 2. Activate
+# 2. Activate Environment
 source activate.sh
 
-# 3. Test (1 minute)
+# 3. Run Test (1 minute)
 bash quick_test.sh
 ```
 
-That's it! Your solver is ready.
+**That's it!** Your solver is ready to use.
+
+**Timing:**
+- First run: 8-15 minutes (includes MFEM compilation)
+- Next runs: < 1 second (MFEM cached)
 
 ---
 
@@ -59,12 +68,46 @@ Near-linear scaling with mesh resolution!
 
 ## 🔧 Requirements
 
-- Conda (Miniconda or Anaconda)
-- Linux/macOS/WSL2
-- 2+ GB RAM
-- 500 MB disk space
+- **Conda** (Miniconda or Anaconda)
+- **Linux/macOS/WSL2**
+- **2+ GB RAM**
+- **500 MB disk space** (plus ~1-2 GB for MFEM build)
 
-That's all! Everything else is installed automatically.
+That's all! Everything else is installed automatically by `setup_environment.sh`.
+
+---
+
+## 🚀 Complete Setup Automation
+
+The `setup_environment.sh` script (422 lines) handles everything:
+
+### What It Installs (Conda Packages)
+- **Compilers:** GCC, G++, Gfortran
+- **Build Tools:** CMake, Make, Git
+- **MFEM Dependencies:** HYPRE, METIS, OpenMPI
+- **Linear Algebra:** LAPACK, BLAS
+
+### What It Installs (Python Packages)
+- numpy, scipy, matplotlib, scikit-learn
+
+### What It Does
+1. Creates isolated conda environment
+2. Installs all build dependencies
+3. Downloads MFEM from GitHub (if needed)
+4. Compiles MFEM with MPI support (5-10 min)
+5. Builds the Navier-Stokes solver
+6. Creates helper scripts (activate.sh, quick_test.sh)
+
+### Timing
+| Step | Time |
+|------|------|
+| Conda setup | 1-2 min |
+| Dependencies | 1-2 min |
+| MFEM download | 30 sec |
+| MFEM compile | 5-10 min |
+| Project build | 1-2 sec |
+| **Total (first)** | **8-15 min** |
+| **Total (cached)** | **< 1 sec** |
 
 ---
 
