@@ -33,6 +33,8 @@ bash quick_test.sh
 - First run: 8-15 minutes (includes MFEM compilation)
 - Next runs: < 1 second (MFEM cached)
 
+**Note:** MFEM is installed in `../mfem-src/build/` (CMake build directory, not in root)
+
 ---
 
 ## ✨ Features
