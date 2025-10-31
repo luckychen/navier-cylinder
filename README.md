@@ -31,20 +31,20 @@ A complete **2D incompressible Navier-Stokes solver for cylinder flow** implemen
 ## Fast Start (30 seconds)
 
 ```bash
-# 1. Activate environment
-conda activate mfem
+# 1. Go to project
+cd 2D-cylinder
 
-# 2. Go to project
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder
+# 2. Setup (one time only)
+bash setup_environment.sh
 
-# 3. Generate mesh
-python3 generate_cylinder_mesh.py 100 100
+# 3. Activate
+source activate.sh
 
-# 4. Run simulation
-./build/navier_solver -m cylinder_structured.mesh -Re 100 -dt 0.01 -t 0.5
+# 4. Run test
+bash quick_test.sh
 ```
 
-Done! Simulation completes in ~0.4 seconds.
+Done! Full setup + simulation in ~5 minutes, test in ~10 seconds.
 
 ---
 
@@ -169,33 +169,53 @@ time ./build/navier_solver -m cylinder_structured.mesh -Re 100 -dt 0.01 -t 0.5
 ## Environment
 
 ### Conda Environment Setup
-- **Location:** `/home/ceoas/chenchon/miniconda3_x86/envs/mfem`
-- **Compilers:** GCC 14.3.0 (C/C++/Fortran)
-- **MPI:** OpenMPI 5.0.8
-- **Libraries:** HYPRE 2.32.0, METIS 5.2.1, ParMETIS 4.0.3
+The `setup_environment.sh` script in the `2D-cylinder` directory automatically:
+- Creates a conda environment named `navier-cylinder`
+- Installs compilers (GCC, g++, gfortran)
+- Installs MPI, HYPRE, METIS, and other dependencies
+- Detects and uses your current conda environment
 
 ### Activation
 ```bash
-source /home/ceoas/chenchon/miniconda3_x86/etc/profile.d/conda.sh
-conda activate mfem
+cd 2D-cylinder
+source activate.sh  # Created by setup_environment.sh
+```
+
+Or manually:
+```bash
+conda activate navier-cylinder
 ```
 
 ---
 
 ## Build Instructions
 
-### Rebuild (if needed)
+### Automated Setup (Recommended)
+The easiest way is to use the automated setup script:
 ```bash
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build
-cmake .. -DMFEM_DIR=/fs1/home/ceoas/chenchon/mfem/mfem-src
+cd 2D-cylinder
+bash setup_environment.sh  # Handles everything automatically
+```
+
+### Manual Rebuild (if needed)
+```bash
+cd 2D-cylinder/build
+cmake ..  # Auto-detects MFEM and conda paths
 make -j4
 ```
 
-### Clean Build
+### Manual Clean Build
 ```bash
-cd /fs1/home/ceoas/chenchon/mfem/2D-cylinder/build
+cd 2D-cylinder/build
 rm -rf CMakeCache.txt CMakeFiles
-cmake .. -DMFEM_DIR=/fs1/home/ceoas/chenchon/mfem/mfem-src
+cmake ..  # Auto-detects paths
+make -j4
+```
+
+### With Custom MFEM Path
+```bash
+cd 2D-cylinder/build
+cmake .. -DMFEM_DIR=/path/to/mfem
 make -j4
 ```
 
